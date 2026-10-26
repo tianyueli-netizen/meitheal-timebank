@@ -23,4 +23,18 @@ class MemberTest {
         assertThrows(IllegalArgumentException.class, () -> new MemberId(null));
         assertThrows(IllegalArgumentException.class, () -> new MemberId("   "));
     }
+
+    @Test
+    @DisplayName("R6: Suspended member cannot perform active operations but CAN receive credits")
+    void suspendedMemberCannotActButCanReceiveCredits() {
+        Member member = new Member(new MemberId("MEM-002"), "Bob", "bob@ucd.ie");
+        member.suspend();
+
+        // 冻结成员主动发起操作必须被拦截 (INV-6)
+        assertThrows(IllegalStateException.class, member::assertActive);
+
+        // R6 关键分支：接收报酬不能被拦截！
+        assertDoesNotThrow(() -> member.credit(60));
+        assertEquals(180, member.getBalance(), "Suspended member must successfully receive earned credits per R6");
+    }
 }

@@ -54,4 +54,11 @@ public class Member {
         }
         this.balance -= amount;
     }
+
+    // INV-6 校验点：外部发起 Offer/Request/Engagement 前必须调用
+    public void assertActive() {
+        if (this.status == MemberStatus.SUSPENDED) {
+            throw new IllegalStateException("R6 Violation: Suspended member cannot perform active operations");
+        }
+    }
 }
