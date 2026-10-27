@@ -7,6 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import ie.ucd.comp41670.meitheal.member.InMemoryMemberRepository;
+
+import java.util.List;
 
 class MemberTest {
 
@@ -36,5 +39,20 @@ class MemberTest {
         // R6 关键分支：接收报酬不能被拦截！
         assertDoesNotThrow(() -> member.credit(60));
         assertEquals(180, member.getBalance(), "Suspended member must successfully receive earned credits per R6");
+    }
+
+    @Test
+    @DisplayName("R12: findAll() must return unmodifiable view preventing internal collection tampering")
+    void repositoryFindAllMustBeUnmodifiablePerR12() {
+        InMemoryMemberRepository repo = new InMemoryMemberRepository();
+        Member m1 = new Member(new MemberId("MEM-010"), "Charlie", "charlie@ucd.ie");
+        repo.save(m1);
+
+        List<Member> members = repo.findAll();
+        assertEquals(1, members.size());
+
+        // 故意尝试修改返回的列表，必须抛出 UnsupportedOperationException (R12 防逃逸)
+        assertThrows(UnsupportedOperationException.class, () -> members.clear(),
+                "R12 Violation: Caller was able to modify returned repository collection!");
     }
 }
