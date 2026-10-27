@@ -1,0 +1,5 @@
+ie\ucd\comp41670\meitheal\domain\MemberId.class
+ie\ucd\comp41670\meitheal\member\Member.class
+ie\ucd\comp41670\meitheal\contract\MemberRepository.class
+ie\ucd\comp41670\meitheal\domain\MemberStatus.class
+ie\ucd\comp41670\meitheal\member\InMemoryMemberRepository.class
