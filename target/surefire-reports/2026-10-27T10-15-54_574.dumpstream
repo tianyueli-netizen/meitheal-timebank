@@ -1,5 +1,0 @@
-# Created at 2026-10-27T10:15:54.837
-Boot Manifest-JAR contains absolute paths in classpath 'E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-
