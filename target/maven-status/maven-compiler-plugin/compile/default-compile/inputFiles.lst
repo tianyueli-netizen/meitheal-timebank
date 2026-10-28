@@ -1,5 +1,7 @@
 E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\domain\MemberId.java
 E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\contract\MemberRepository.java
+E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\contract\CommunityFundService.java
 E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\member\InMemoryMemberRepository.java
 E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\member\Member.java
 E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\domain\MemberStatus.java
+E:\学习文件包\ucd\autumn\software engineering\projects\COMP41670-labs\meitheal-timebank\src\main\java\ie\ucd\comp41670\meitheal\member\CommunityFundServiceImpl.java
