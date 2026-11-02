@@ -13,7 +13,7 @@ public class CommunityFundServiceImpl implements CommunityFundService {
     private final MemberRepository memberRepository;
     private int fundBalance = 0;
 
-    // 核心修复：采用 YearMonth 映射，精确锚定自然日历月 (INV-12)
+    // 采用 YearMonth 映射，精确锚定自然日历月 (INV-12)
     private final Map<MemberId, YearMonth> lastGrantMonth = new ConcurrentHashMap<>();
 
     public CommunityFundServiceImpl(MemberRepository memberRepository) {
@@ -30,16 +30,8 @@ public class CommunityFundServiceImpl implements CommunityFundService {
 
     @Override
     public synchronized void grantRelief(MemberId recipientId, int amount, LocalDate grantDate) {
-        Objects.requireNonNull(recipientId, "Recipient ID required");
-        Objects.requireNonNull(grantDate, "Grant date required");
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Grant amount must be strictly positive");
-        }
-
-        // 1. 守卫 INV-11：基金不能透支自身没有的积分 (The fund cannot grant credits it does not hold)
-        if (this.fundBalance < amount) {
-            throw new IllegalStateException("INV-11 Violation: Insufficient fund balance (" + fundBalance + ") for grant (" + amount + ")");
-        }
+        validateInputs(recipientId, amount, grantDate);
+        validateFundSolvency(amount);
 
         Member recipient = memberRepository.findById(recipientId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + recipientId.value()));
@@ -60,6 +52,21 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         this.fundBalance -= amount;
         recipient.credit(amount);
         lastGrantMonth.put(recipientId, currentMonth);
+    }
+
+    private void validateInputs(MemberId recipientId, int amount, LocalDate grantDate) {
+        Objects.requireNonNull(recipientId, "Recipient ID required");
+        Objects.requireNonNull(grantDate, "Grant date required");
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Grant amount must be strictly positive");
+        }
+    }
+
+    private void validateFundSolvency(int amount) {
+        // 守卫 INV-11：基金不能透支自身没有的积分
+        if (this.fundBalance < amount) {
+            throw new IllegalStateException("INV-11 Violation: Insufficient fund balance (" + fundBalance + ") for grant (" + amount + ")");
+        }
     }
 
     @Override
