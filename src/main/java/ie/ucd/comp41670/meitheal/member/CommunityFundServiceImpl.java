@@ -38,10 +38,7 @@ public class CommunityFundServiceImpl implements CommunityFundService {
 
         validateRecipientEligibility(recipient, grantDate);
 
-        // 状态变更与资产划转
-        this.fundBalance -= amount;
-        recipient.credit(amount);
-        lastGrantMonth.put(recipientId, YearMonth.from(grantDate));
+        applyReliefTransfer(recipient, amount, grantDate);
     }
 
     private void validateInputs(MemberId recipientId, int amount, LocalDate grantDate) {
@@ -71,6 +68,12 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         if (previousMonth != null && previousMonth.equals(currentMonth)) {
             throw new IllegalStateException("INV-12 Violation: Member already received a grant in calendar month: " + currentMonth);
         }
+    }
+
+    private void applyReliefTransfer(Member recipient, int amount, LocalDate grantDate) {
+        this.fundBalance -= amount;
+        recipient.credit(amount);
+        lastGrantMonth.put(recipient.getId(), YearMonth.from(grantDate));
     }
 
     @Override
