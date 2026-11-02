@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ie.ucd.comp41670.meitheal.member.CommunityFundServiceCharacterisationTest
 -------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.063 s -- in ie.ucd.comp41670.meitheal.member.CommunityFundServiceCharacterisationTest
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.066 s -- in ie.ucd.comp41670.meitheal.member.CommunityFundServiceCharacterisationTest

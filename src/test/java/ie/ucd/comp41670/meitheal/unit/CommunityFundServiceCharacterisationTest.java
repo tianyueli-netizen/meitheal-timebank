@@ -141,4 +141,21 @@ class CommunityFundServiceCharacterisationTest {
         assertDoesNotThrow(() -> fundService.grantRelief(deficitMember.getId(), 30, nov01));
         assertEquals(140, fundService.getFundBalance());
     }
+
+    @Test
+    @DisplayName("Adversarial Pin: Same calendar month across different years is permitted")
+    void pin_adversarial_sameMonthDifferentYearsPermitted() {
+        LocalDate lastYearNov = LocalDate.of(2025, 11, 15);
+        LocalDate thisYearNov = LocalDate.of(2026, 11, 15);
+
+        // 2025 年 11 月领取救济
+        fundService.grantRelief(deficitMember.getId(), 20, lastYearNov);
+
+        // 重新扣减使其余额保持为负数
+        deficitMember.debit(30);
+
+        // 2026 年 11 月（相隔一年）必须允许正常领取，绝不能仅比对 Month 枚举
+        assertDoesNotThrow(() -> fundService.grantRelief(deficitMember.getId(), 20, thisYearNov));
+        assertEquals(160, fundService.getFundBalance());
+    }
 }

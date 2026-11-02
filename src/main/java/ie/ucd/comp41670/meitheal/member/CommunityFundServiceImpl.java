@@ -36,22 +36,12 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         Member recipient = memberRepository.findById(recipientId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found: " + recipientId.value()));
 
-        // 2. 守卫 R11：只有余额严格低于 0 的会员有资格申请
-        if (recipient.getBalance() >= 0) {
-            throw new IllegalStateException("R11 Violation: Member balance (" + recipient.getBalance() + ") is not below zero");
-        }
-
-        // 3. 守卫 INV-12：每个自然日历月至多一次救济 (At most one grant per calendar month)
-        YearMonth currentMonth = YearMonth.from(grantDate);
-        YearMonth previousMonth = lastGrantMonth.get(recipientId);
-        if (previousMonth != null && previousMonth.equals(currentMonth)) {
-            throw new IllegalStateException("INV-12 Violation: Member already received a grant in calendar month: " + currentMonth);
-        }
+        validateRecipientEligibility(recipient, grantDate);
 
         // 状态变更与资产划转
         this.fundBalance -= amount;
         recipient.credit(amount);
-        lastGrantMonth.put(recipientId, currentMonth);
+        lastGrantMonth.put(recipientId, YearMonth.from(grantDate));
     }
 
     private void validateInputs(MemberId recipientId, int amount, LocalDate grantDate) {
@@ -66,6 +56,20 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         // 守卫 INV-11：基金不能透支自身没有的积分
         if (this.fundBalance < amount) {
             throw new IllegalStateException("INV-11 Violation: Insufficient fund balance (" + fundBalance + ") for grant (" + amount + ")");
+        }
+    }
+
+    private void validateRecipientEligibility(Member recipient, LocalDate grantDate) {
+        // 守卫 R11：只有余额严格低于 0 的会员有资格申请
+        if (recipient.getBalance() >= 0) {
+            throw new IllegalStateException("R11 Violation: Member balance (" + recipient.getBalance() + ") is not below zero");
+        }
+
+        // 守卫 INV-12：每个自然日历月至多一次救济 (At most one grant per calendar month)
+        YearMonth currentMonth = YearMonth.from(grantDate);
+        YearMonth previousMonth = lastGrantMonth.get(recipient.getId());
+        if (previousMonth != null && previousMonth.equals(currentMonth)) {
+            throw new IllegalStateException("INV-12 Violation: Member already received a grant in calendar month: " + currentMonth);
         }
     }
 
