@@ -1,7 +1,17 @@
 ie\ucd\comp41670\meitheal\member\Member.class
 ie\ucd\comp41670\meitheal\contract\MemberRepository.class
 ie\ucd\comp41670\meitheal\contract\CommunityFundService.class
+ie\ucd\comp41670\meitheal\domain\TimeCredit.class
+ie\ucd\comp41670\meitheal\engagement\Offer.class
+ie\ucd\comp41670\meitheal\domain\LedgerEntry.class
+ie\ucd\comp41670\meitheal\domain\SettlementResult.class
+ie\ucd\comp41670\meitheal\session\EngagementId.class
 ie\ucd\comp41670\meitheal\member\CommunityFundServiceImpl.class
+ie\ucd\comp41670\meitheal\domain\TransactionType.class
+ie\ucd\comp41670\meitheal\engagement\Request.class
 ie\ucd\comp41670\meitheal\domain\MemberId.class
 ie\ucd\comp41670\meitheal\domain\MemberStatus.class
+ie\ucd\comp41670\meitheal\domain\SkillCategory.class
 ie\ucd\comp41670\meitheal\member\InMemoryMemberRepository.class
+ie\ucd\comp41670\meitheal\engagement\EngagementServiceImpl.class
+ie\ucd\comp41670\meitheal\domain\FulfilmentWindow.class

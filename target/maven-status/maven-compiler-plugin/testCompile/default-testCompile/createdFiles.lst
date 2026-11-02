@@ -1,3 +1,8 @@
-ie\ucd\comp41670\meitheal\SmokeTest.class
-ie\ucd\comp41670\meitheal\unit\CommunityFundTest.class
+ie\ucd\comp41670\meitheal\unit\TimeCreditTest.class
 ie\ucd\comp41670\meitheal\unit\MemberTest.class
+ie\ucd\comp41670\meitheal\unit\CommunityFundTest.class
+ie\ucd\comp41670\meitheal\unit\FulfilmentWindowTest.class
+ie\ucd\comp41670\meitheal\member\CommunityFundServiceCharacterisationTest.class
+ie\ucd\comp41670\meitheal\SmokeTest.class
+ie\ucd\comp41670\meitheal\unit\LedgerEntryTest.class
+ie\ucd\comp41670\meitheal\unit\SkillCategoryTest.class
