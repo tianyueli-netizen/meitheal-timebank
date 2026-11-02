@@ -23,32 +23,7 @@ public class MeithealCli {
 
             String choice = scanner.nextLine();
 
-            switch (choice) {
-
-                case "1":
-                    createRequest();
-                    break;
-
-                case "2":
-                    viewRequests();
-                    break;
-
-                case "3":
-                    viewOffers();
-                    break;
-
-                case "4":
-                    acceptOffer();
-                    break;
-
-                case "0":
-                    running = false;
-                    System.out.println("Goodbye!");
-                    break;
-
-                default:
-                    System.out.println("Invalid option. Please try again.");
-            }
+            running = handleChoice(choice);
         }
     }
     private void printWelcomeMessage() {
@@ -64,7 +39,28 @@ public class MeithealCli {
         System.out.println("4. Accept an Offer");
         System.out.println("0. Exit");
     }
-
+    private boolean handleChoice(String choice) {
+        switch (choice) {
+            case "1":
+                createRequest();
+                break;
+            case "2":
+                viewRequests();
+                break;
+            case "3":
+                viewOffers();
+                break;
+            case "4":
+                acceptOffer();
+                break;
+            case "0":
+                System.out.println("Goodbye!");
+                return false;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+        return true;
+    }
     private void createRequest() {
         System.out.println("Create Request selected.");
         // TODO: Connect to EngagementServiceImpl
