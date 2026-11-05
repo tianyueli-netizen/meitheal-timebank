@@ -14,11 +14,7 @@ public record SettlementResult(
         if (isApproved) {
             validateApprovedSettlement(laborCredits, actualLevyCredits);
         } else {
-            if (laborCredits != 0 || actualLevyCredits != 0) {
-                throw new IllegalArgumentException(
-                        "Rejected settlements must have zero labor credits and zero levy."
-                );
-            }
+            validateRejectedSettlement(laborCredits, actualLevyCredits);
         }
     }
 
@@ -30,6 +26,14 @@ public record SettlementResult(
         if (actualLevyCredits < 0 || actualLevyCredits > maxLevy) {
             throw new IllegalArgumentException(
                     "Approved settlements require a levy between 0 and floor(5% of labor credits)."
+            );
+        }
+    }
+
+    private static void validateRejectedSettlement(int laborCredits, int actualLevyCredits) {
+        if (laborCredits != 0 || actualLevyCredits != 0) {
+            throw new IllegalArgumentException(
+                    "Rejected settlements must have zero labor credits and zero levy."
             );
         }
     }
