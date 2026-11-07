@@ -70,10 +70,11 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         recipient.credit(amount);
         lastGrantMonth.put(recipientId, currentMonth);
 
-            fundEntries.add(new LedgerEntry(
+        // ✅ 修复 1: 系统基金发放时 fromMemberId 为 null，toMemberId 为 recipientId
+        fundEntries.add(new LedgerEntry(
                 "GRANT-" + UUID.randomUUID().toString().substring(0, 8),
-                recipientId,
                 null,
+                recipientId,
                 amount,
                 TransactionType.FUND_GRANT,
                 Instant.now()
@@ -87,6 +88,6 @@ public class CommunityFundServiceImpl implements CommunityFundService {
 
     @Override
     public synchronized List<LedgerEntry> getFundLedgerEntries() {
-        return fundEntries;
+        return List.copyOf(fundEntries);
     }
 }
