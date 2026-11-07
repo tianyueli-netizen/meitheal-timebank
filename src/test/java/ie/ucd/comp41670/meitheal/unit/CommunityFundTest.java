@@ -94,4 +94,15 @@ class CommunityFundTest {
         assertThrows(UnsupportedOperationException.class, entries::clear,
                 "R12 Violation: Caller must not be able to clear or mutate fund ledger history!");
     }
+
+    @Test
+    @DisplayName("Validation: Reject non-positive grant amounts, negative levies, and null arguments")
+    void shouldRejectInvalidArgumentsAndNonPositiveAmounts() {
+        LocalDate today = LocalDate.of(2026, 10, 29);
+        assertThrows(IllegalArgumentException.class, () -> fundService.depositLevy(-1));
+        assertThrows(IllegalArgumentException.class, () -> fundService.grantRelief(deficitMember.getId(), 0, today));
+        assertThrows(IllegalArgumentException.class, () -> fundService.grantRelief(deficitMember.getId(), -10, today));
+        assertThrows(NullPointerException.class, () -> fundService.grantRelief(null, 10, today));
+        assertThrows(NullPointerException.class, () -> fundService.grantRelief(deficitMember.getId(), 10, null));
+    }
 }
