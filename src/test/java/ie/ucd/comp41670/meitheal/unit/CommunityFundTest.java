@@ -69,4 +69,29 @@ class CommunityFundTest {
                 () -> fundService.grantRelief(positiveMember.getId(), 20, LocalDate.of(2026, 10, 29)),
                 "R11 Violation: Relief can only be granted to members with balance strictly below zero");
     }
+
+    @Test
+    @DisplayName("R7 & R11: Grant relief must record an immutable FUND_GRANT LedgerEntry with correct recipient")
+    void shouldRecordFundGrantLedgerEntryCorrectly() {
+        LocalDate grantDate = LocalDate.of(2026, 10, 29);
+        fundService.grantRelief(deficitMember.getId(), 40, grantDate);
+
+        var entries = fundService.getFundLedgerEntries();
+        // setUp 中有一笔 depositLevy(100)，加上本次 grantRelief(40)，共 2 笔
+        assertEquals(2, entries.size());
+
+        var grantEntry = entries.get(1);
+        assertEquals(ie.ucd.comp41670.meitheal.domain.TransactionType.FUND_GRANT, grantEntry.type());
+        assertEquals(40, grantEntry.amount());
+        assertNull(grantEntry.fromMemberId(), "System fund grant should have null fromMemberId");
+        assertEquals(deficitMember.getId(), grantEntry.toMemberId(), "Recipient must be recorded as toMemberId");
+    }
+
+    @Test
+    @DisplayName("R12: getFundLedgerEntries() must return an unmodifiable view preventing history tampering")
+    void fundLedgerEntriesMustBeUnmodifiablePerR12() {
+        var entries = fundService.getFundLedgerEntries();
+        assertThrows(UnsupportedOperationException.class, entries::clear,
+                "R12 Violation: Caller must not be able to clear or mutate fund ledger history!");
+    }
 }
