@@ -14,17 +14,29 @@ public class Member {
     private MemberStatus status;
 
     public Member(MemberId id, String name, String email) {
-        this.id = Objects.requireNonNull(id, "MemberId cannot be null");
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be null or blank");
-        }
-        if (email == null || !email.contains("@")) {
-            throw new IllegalArgumentException("Valid email required");
-        }
+        this.id = validateMemberId(id);
+        validateName(name);
+        validateEmail(email);
         this.name = name.trim();
         this.email = email.trim();
         this.balance = INITIAL_WELCOME_GRANT; // 锁死 R3 规则
         this.status = MemberStatus.ACTIVE;
+    }
+
+    private static MemberId validateMemberId(MemberId id) {
+        return Objects.requireNonNull(id, "MemberId cannot be null");
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null or blank");
+        }
+    }
+
+    private static void validateEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            throw new IllegalArgumentException("Valid email required");
+        }
     }
 
     public MemberId getId() { return id; }
