@@ -44,7 +44,16 @@ public class CommunityFundServiceImpl implements CommunityFundService {
                 Instant.now()
         ));
     }
-
+    private void recordGrantEntry(MemberId recipientId, int amount) {
+        fundEntries.add(new LedgerEntry(
+                "GRANT-" + UUID.randomUUID().toString().substring(0, 8),
+                null,
+                recipientId,
+                amount,
+                TransactionType.FUND_GRANT,
+                Instant.now()
+        ));
+    }
     @Override
     public synchronized void grantRelief(MemberId recipientId, int amount, LocalDate grantDate) {
         Objects.requireNonNull(recipientId, "Recipient ID required");
@@ -72,14 +81,7 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         lastGrantMonth.put(recipientId, currentMonth);
 
         // ✅ 修复 1: 系统基金发放时 fromMemberId 为 null，toMemberId 为 recipientId
-        fundEntries.add(new LedgerEntry(
-                "GRANT-" + UUID.randomUUID().toString().substring(0, 8),
-                null,
-                recipientId,
-                amount,
-                TransactionType.FUND_GRANT,
-                Instant.now()
-        ));
+        recordGrantEntry(recipientId, amount);
     }
 
     @Override
