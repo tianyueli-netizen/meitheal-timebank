@@ -77,6 +77,10 @@ public class Member {
 
     // INV-6 校验点：外部发起 Offer/Request/Engagement 前必须调用
     public void assertActive() {
+        requireActive();
+    }
+
+    private void requireActive() {
         if (this.status == MemberStatus.SUSPENDED) {
             throw new IllegalStateException("R6 Violation: Suspended member cannot perform active operations");
         }

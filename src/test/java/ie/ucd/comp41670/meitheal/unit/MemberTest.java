@@ -62,6 +62,20 @@ class MemberTest {
     }
 
     @Test
+    @DisplayName("Adversarial inversion candidate: if a helper were called from credit/debit, suspended members would begin throwing before the balance change")
+    void adversarialInversionCandidateWouldDifferForSuspendedMembers() {
+        Member member = new Member(new MemberId("MEM-101"), "Eli", "eli@ucd.ie");
+        member.suspend();
+
+        assertDoesNotThrow(() -> member.credit(10),
+                "Pinned behaviour: credit does not invoke the active-state guard");
+        assertDoesNotThrow(() -> member.debit(5),
+                "Pinned behaviour: debit does not invoke the active-state guard");
+        assertEquals(125, member.getBalance(),
+                "Pinned behaviour: balance mutations remain accepted for a suspended member");
+    }
+
+    @Test
     @DisplayName("R12: findAll() must return unmodifiable view preventing internal collection tampering")
     void repositoryFindAllMustBeUnmodifiablePerR12() {
         InMemoryMemberRepository repo = new InMemoryMemberRepository();
