@@ -28,5 +28,9 @@ public interface Ledger {
      * Returns all entries involving a particular member.
      */
     List<LedgerEntry> getEntriesByMember(MemberId memberId);
-    int size();
+
+    /**
+     * Returns the number of ledger entries currently stored.
+     */
+    int getEntryCount();
 }

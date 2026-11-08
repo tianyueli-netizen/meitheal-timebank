@@ -39,11 +39,11 @@ class AppendOnlyLedgerTest {
 
         ledger.append(createTransfer("entry-001", member1, member2, 10));
 
-        assertEquals(1, ledger.size());
+        assertEquals(1, ledger.getEntryCount());
     }
 
     @Test
-    void appendShouldPreserveExistingEntries() {
+    void appendShouldPreserveExistingEntriesInInsertionOrder() {
         AppendOnlyLedger ledger = new AppendOnlyLedger();
 
         LedgerEntry first = createTransfer(
@@ -57,7 +57,7 @@ class AppendOnlyLedgerTest {
         ledger.append(second);
 
         assertEquals(List.of(first, second), ledger.getAllEntries());
-        assertEquals(2, ledger.size());
+        assertEquals(2, ledger.getEntryCount());
     }
 
     @Test
@@ -93,7 +93,7 @@ class AppendOnlyLedgerTest {
         );
 
         // Attempting to modify the exported list must not affect the ledger.
-        assertEquals(1, ledger.size());
+        assertEquals(1, ledger.getEntryCount());
         assertEquals(List.of(entry), ledger.getAllEntries());
     }
 
@@ -145,7 +145,7 @@ class AppendOnlyLedgerTest {
                 () -> ledger.append(null)
         );
 
-        assertEquals(0, ledger.size());
+        assertEquals(0, ledger.getEntryCount());
     }
 
     @Test

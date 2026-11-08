@@ -33,7 +33,7 @@ public final class AppendOnlyLedger implements Ledger {
         entries.add(entry);
     }
     @Override
-    public synchronized int size() {
+    public synchronized int getEntryCount() {
         return entries.size();
     }
 
