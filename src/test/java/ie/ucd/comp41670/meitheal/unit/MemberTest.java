@@ -42,6 +42,26 @@ class MemberTest {
     }
 
     @Test
+    @DisplayName("Characterisation: the current implementation only blocks active operations for suspended members and still allows credits/debits")
+    void suspendedMembersStillAcceptCreditAndDebitDespiteAssertActive() {
+        Member member = new Member(new MemberId("MEM-100"), "Dana", "dana@ucd.ie");
+        member.suspend();
+
+        assertThrows(IllegalStateException.class, member::assertActive,
+                "Current behaviour: suspended status is the only state that trips assertActive");
+
+        assertDoesNotThrow(() -> member.credit(25),
+                "Current behaviour: credit() does not validate member status before increasing balance");
+        assertEquals(145, member.getBalance(),
+                "Current behaviour: a suspended member can still receive credits");
+
+        assertDoesNotThrow(() -> member.debit(30),
+                "Current behaviour: debit() also bypasses status checks");
+        assertEquals(115, member.getBalance(),
+                "Current behaviour: a suspended member can still be debited without an active-state guard");
+    }
+
+    @Test
     @DisplayName("R12: findAll() must return unmodifiable view preventing internal collection tampering")
     void repositoryFindAllMustBeUnmodifiablePerR12() {
         InMemoryMemberRepository repo = new InMemoryMemberRepository();
