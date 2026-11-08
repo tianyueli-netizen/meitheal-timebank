@@ -24,7 +24,11 @@ public class CommunityFundServiceImpl implements CommunityFundService {
     public CommunityFundServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = Objects.requireNonNull(memberRepository, "Repository required");
     }
-
+    private void validateGrantAmount(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Grant amount must be strictly positive");
+        }
+    }
     @Override
     public synchronized void depositLevy(int amount) {
         if (amount < 0) {
@@ -45,10 +49,7 @@ public class CommunityFundServiceImpl implements CommunityFundService {
     public synchronized void grantRelief(MemberId recipientId, int amount, LocalDate grantDate) {
         Objects.requireNonNull(recipientId, "Recipient ID required");
         Objects.requireNonNull(grantDate, "Grant date required");
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Grant amount must be strictly positive");
-        }
-
+        validateGrantAmount(amount);
         if (this.fundBalance < amount) {
             throw new IllegalStateException("INV-11 Violation: Insufficient fund balance (" + fundBalance + ") for grant (" + amount + ")");
         }
