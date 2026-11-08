@@ -54,17 +54,25 @@ public class Member {
     }
 
     public void credit(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Credit amount cannot be negative");
-        }
+        validateCreditAmount(amount);
         this.balance += amount;
     }
 
     public void debit(int amount) {
+        validateDebitAmount(amount);
+        this.balance -= amount;
+    }
+
+    private static void validateCreditAmount(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Credit amount cannot be negative");
+        }
+    }
+
+    private static void validateDebitAmount(int amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("Debit amount cannot be negative");
         }
-        this.balance -= amount;
     }
 
     // INV-6 校验点：外部发起 Offer/Request/Engagement 前必须调用

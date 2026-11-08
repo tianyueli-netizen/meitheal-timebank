@@ -10,3 +10,9 @@ Generate: Extract `validateMemberId`, `validateName`, and `validateEmail` from t
 Check: Run the characterization suite (`MemberTest`) to confirm constructor behavior remains identical and surrounding invariants are unchanged.
 Decide: Accept. The refactoring is narrow, does not change semantics, and makes the constructor easier to read without affecting the active-state oddity.
 Committed as: `refactor: extract constructor validation`
+
+## Step 2: extract amount validation guards
+Generate: Extract `validateCreditAmount` and `validateDebitAmount` from `credit` and `debit` while keeping the exact same rejection conditions and balance updates.
+Check: Run the characterization suite again; it remains green and the same suspended-member oddity is still pinned.
+Decide: Accept. There is no behavior change beyond removing repeated conditionals, and the surrounding invariants still hold.
+Committed as: `refactor: extract amount validation guards`
