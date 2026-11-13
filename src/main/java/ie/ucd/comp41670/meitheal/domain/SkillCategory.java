@@ -8,7 +8,7 @@ public record SkillCategory(String name) {
     public SkillCategory {
         Objects.requireNonNull(name, "name must not be null");
 
-        name = name.trim();
+        name = name.trim().toUpperCase();
 
         if (name.isEmpty()) {
             throw new IllegalArgumentException(

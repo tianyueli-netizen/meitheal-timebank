@@ -14,11 +14,7 @@ public class MeithealCli {
     public void start() {
 
         boolean running = true;
-
-        System.out.println("================================");
-        System.out.println(" Welcome to Meitheal Timebank");
-        System.out.println("================================");
-
+        printWelcomeMessage();
         while (running) {
 
             System.out.println("\nPlease select an option:");
@@ -59,6 +55,11 @@ public class MeithealCli {
                     System.out.println("Invalid option. Please try again.");
             }
         }
+    }
+    private void printWelcomeMessage() {
+        System.out.println("================================");
+        System.out.println(" Welcome to Meitheal Timebank");
+        System.out.println("================================");
     }
 
     private void createRequest() {

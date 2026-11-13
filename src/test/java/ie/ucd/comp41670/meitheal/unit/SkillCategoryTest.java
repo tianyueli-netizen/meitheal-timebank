@@ -12,14 +12,14 @@ class SkillCategoryTest {
     void shouldCreateCategoryWithValidName() {
         SkillCategory category = new SkillCategory("Java");
 
-        assertEquals("Java", category.name());
+        assertEquals("JAVA", category.name());
     }
 
     @Test
     void shouldRemoveLeadingAndTrailingSpaces() {
         SkillCategory category = new SkillCategory(" Java ");
 
-        assertEquals("Java", category.name());
+        assertEquals("JAVA", category.name());
     }
 
     @Test
