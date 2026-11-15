@@ -15,4 +15,10 @@ public record FulfilmentWindow(Instant earliest, Instant latest) {
             );
         }
     }
+    public boolean contains(Instant instant) {
+        Objects.requireNonNull(instant, "instant must not be null");
+
+        return !instant.isBefore(earliest)
+                && !instant.isAfter(latest);
+    }
 }
