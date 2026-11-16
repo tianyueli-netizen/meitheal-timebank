@@ -1,7 +1,6 @@
 package ie.ucd.comp41670.meitheal.session;
 
 import ie.ucd.comp41670.meitheal.domain.MemberId;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -73,6 +72,10 @@ public class Session {
         return duration.toCredits();
     }
 
+    public boolean isParticipant(MemberId memberId) {
+        return memberId != null && (memberId.equals(providerId) || memberId.equals(requesterId));
+    }
+
     public boolean isProviderConfirmed() {
         return providerConfirmed;
     }
@@ -82,10 +85,16 @@ public class Session {
     }
 
     public void confirmProvider() {
+        if (cancelled) {
+            throw new IllegalStateException("Cannot confirm a cancelled session");
+        }
         providerConfirmed = true;
     }
 
     public void confirmRequester() {
+        if (cancelled) {
+            throw new IllegalStateException("Cannot confirm a cancelled session");
+        }
         requesterConfirmed = true;
     }
 
@@ -127,6 +136,9 @@ public class Session {
     }
 
     public void cancel() {
+        if (creditsTransferred) {
+            throw new IllegalStateException("Cannot cancel a session whose credits have already been transferred");
+        }
         this.cancelled = true;
     }
 

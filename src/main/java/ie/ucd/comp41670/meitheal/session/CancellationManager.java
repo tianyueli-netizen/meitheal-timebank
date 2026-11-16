@@ -1,7 +1,6 @@
 package ie.ucd.comp41670.meitheal.session;
 
 import ie.ucd.comp41670.meitheal.domain.MemberId;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -54,15 +53,21 @@ public class CancellationManager {
         Objects.requireNonNull(cancellingMember, "Cancelling member cannot be null");
         Objects.requireNonNull(cancellationTime, "Cancellation time cannot be null");
 
-        boolean lateCancellation = isLateCancellation(session, cancellationTime);
-        if (lateCancellation) {
-            session.cancel();
-            recordCancellation(cancellingMember);
-            return false;
+        if (!session.isParticipant(cancellingMember)) {
+            throw new IllegalArgumentException("Only session participants can cancel this session");
+        }
+        if (session.isCancelled()) {
+            throw new IllegalStateException("Session is already cancelled");
         }
 
-        if (session.isConfirmed() && !session.isCancelled()) {
-            session.cancel();
+        boolean wasConfirmed = session.isConfirmed();
+        boolean lateCancellation = wasConfirmed && isLateCancellation(session, cancellationTime);
+
+        session.cancel();
+
+        if (lateCancellation) {
+            recordCancellation(cancellingMember);
+            return false;
         }
         return true;
     }
