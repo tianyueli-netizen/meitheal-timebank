@@ -1,6 +1,9 @@
 
 package ie.ucd.comp41670.meitheal.app;
 
+import ie.ucd.comp41670.meitheal.domain.SkillCategory;
+import ie.ucd.comp41670.meitheal.engagement.EngagementServiceImpl;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,9 +41,18 @@ class MeithealCliTest {
         System.setIn(new ByteArrayInputStream(
                 input.getBytes(StandardCharsets.UTF_8)));
 
-        System.setOut(new PrintStream(output));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
 
-        MeithealCli cli = new MeithealCli();
+        Set<SkillCategory> categories = Set.of(
+                new SkillCategory("GARDENING"),
+                new SkillCategory("TRANSPORT"),
+                new SkillCategory("COOKING")
+        );
+
+        EngagementServiceImpl service =
+                new EngagementServiceImpl(categories);
+
+        MeithealCli cli = new MeithealCli(service);
         cli.start();
 
         return output.toString(StandardCharsets.UTF_8);
@@ -57,7 +70,7 @@ class MeithealCliTest {
     @Test
     @DisplayName("Invalid input: Display error message")
     void shouldDisplayErrorForInvalidOption() {
-        String output = runCli("5\n0\n");
+        String output = runCli("9\n0\n");
 
         assertTrue(output.contains("Invalid option. Please try again."));
         assertTrue(output.contains("Goodbye!"));
@@ -65,10 +78,21 @@ class MeithealCliTest {
 
     @Test
     @DisplayName("Input 1: Create Request")
-    void shouldDisplayCreateRequestMessage() {
-        String output = runCli("1\n0\n");
+    void shouldCreateRequestSuccessfully() {
+        String input =
+                "1\n" +
+                        "REQ001\n" +
+                        "member1\n" +
+                        "GARDENING\n" +
+                        "Help with gardening\n" +
+                        "2026-12-01T10:00:00Z\n" +
+                        "2026-12-01T12:00:00Z\n" +
+                        "0\n";
 
-        assertTrue(output.contains("Create Request selected."));
+        String output = runCli(input);
+
+        assertTrue(output.contains("Create Request"));
+        assertTrue(output.contains("Request created successfully!"));
     }
 
     @Test
@@ -76,7 +100,8 @@ class MeithealCliTest {
     void shouldDisplayViewRequestsMessage() {
         String output = runCli("2\n0\n");
 
-        assertTrue(output.contains("View Requests selected."));
+        assertTrue(output.contains("Available Requests"));
+        assertTrue(output.contains("No requests available."));
     }
 
     @Test
@@ -84,15 +109,16 @@ class MeithealCliTest {
     void shouldDisplayViewOffersMessage() {
         String output = runCli("3\n0\n");
 
-        assertTrue(output.contains("View Offers selected."));
+        assertTrue(output.contains("Available Offers"));
+        assertTrue(output.contains("No offers available."));
     }
 
     @Test
-    @DisplayName("Input 4: Accept Offer")
-    void shouldDisplayAcceptOfferMessage() {
+    @DisplayName("Input 4: Accept Offer when no requests exist")
+    void shouldHandleAcceptOfferWhenRecordsDoNotExist() {
         String output = runCli("4\n0\n");
 
-        assertTrue(output.contains("Accept Offer selected."));
+        assertTrue(output.contains("Accept an Offer"));
+        assertTrue(output.contains("No requests available."));
     }
 }
-
