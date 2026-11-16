@@ -52,6 +52,9 @@ public class Member {
         if (amount < 0) {
             throw new IllegalArgumentException("Debit amount cannot be negative");
         }
+        if (this.balance - amount < -180) {
+            throw new IllegalStateException("R2 Violation: Balance cannot fall below -180 credits");
+        }
         this.balance -= amount;
     }
 
