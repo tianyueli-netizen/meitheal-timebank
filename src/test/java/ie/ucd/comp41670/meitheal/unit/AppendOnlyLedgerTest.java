@@ -157,4 +157,96 @@ class AppendOnlyLedgerTest {
                 () -> ledger.getEntriesByMember(null)
         );
     }
+
+    @Test /*No record of transaction when create entry */
+    void emptyLedgerShouldHaveNoEntries() {
+        AppendOnlyLedger ledger = new AppendOnlyLedger();
+
+        assertEquals(0, ledger.getEntryCount());
+        assertTrue(ledger.getAllEntries().isEmpty());
+        assertTrue(ledger.getEntriesByMember(member1).isEmpty());
+    }
+
+    @Test
+    void getEntriesByMemberShouldBeUnmodifiable() {
+        AppendOnlyLedger ledger = new AppendOnlyLedger();
+
+        LedgerEntry entry = createTransfer(
+                "entry-001", member1, member2, 10
+        );
+        ledger.append(entry);
+
+        List<LedgerEntry> entries =
+                ledger.getEntriesByMember(member1);
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                entries::clear
+        );
+
+        assertEquals(1, ledger.getEntryCount());
+        assertEquals(List.of(entry), ledger.getAllEntries());
+    }
+
+    @Test
+    void ledgerSnapshotShouldNotChangeAfterAppend() {
+        AppendOnlyLedger ledger = new AppendOnlyLedger();
+
+        LedgerEntry first = createTransfer(
+                "entry-001", member1, member2, 10
+        );
+        LedgerEntry second = createTransfer(
+                "entry-002", member2, member3, 5
+        );
+
+        ledger.append(first);
+
+        List<LedgerEntry> snapshot = ledger.getAllEntries();
+
+        ledger.append(second);
+
+        assertEquals(List.of(first), snapshot);
+        assertEquals(List.of(first, second),
+                ledger.getAllEntries());
+        assertEquals(2, ledger.getEntryCount());
+    }
+
+    @Test
+    void getEntriesByMemberShouldHandleCommunityFundEntries() {
+        AppendOnlyLedger ledger = new AppendOnlyLedger();
+
+        LedgerEntry levy = new LedgerEntry(
+                "levy-001",
+                member1,
+                null,
+                5,
+                TransactionType.COMMUNITY_LEVY,
+                Instant.parse("2026-11-08T10:00:00Z")
+        );
+
+        LedgerEntry grant = new LedgerEntry(
+                "grant-001",
+                null,
+                member2,
+                10,
+                TransactionType.FUND_GRANT,
+                Instant.parse("2026-11-08T11:00:00Z")
+        );
+
+        ledger.append(levy);
+        ledger.append(grant);
+
+        assertEquals(List.of(levy),
+                ledger.getEntriesByMember(member1));
+
+        assertEquals(List.of(grant),
+                ledger.getEntriesByMember(member2));
+
+        assertTrue(
+                ledger.getEntriesByMember(member3).isEmpty()
+        );
+
+        assertEquals(2, ledger.getEntryCount());
+    }
+
 }

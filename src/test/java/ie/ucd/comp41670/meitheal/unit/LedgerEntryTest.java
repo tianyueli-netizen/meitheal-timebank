@@ -142,4 +142,55 @@ class LedgerEntryTest {
         assertEquals(120, entry.amount());
         assertEquals(TransactionType.WELCOME_GRANT, entry.type());
     }
+
+    @Test
+    void shouldPreserveTimestamp() {
+        Instant timestamp = Instant.EPOCH;
+
+        LedgerEntry entry = new LedgerEntry(
+                "entry-007",
+                member1,
+                member2,
+                10,
+                TransactionType.TRANSFER,
+                timestamp
+        );
+
+        assertEquals(timestamp, entry.timestamp());
+    }
+
+    @Test
+    void shouldAllowCommunityLevyToFund() {
+        LedgerEntry entry = new LedgerEntry(
+                "entry-008",
+                member1,
+                null,
+                5,
+                TransactionType.COMMUNITY_LEVY,
+                Instant.EPOCH
+        );
+
+        assertEquals(member1, entry.fromMemberId());
+        assertNull(entry.toMemberId());
+        assertEquals(5, entry.amount());
+        assertEquals(TransactionType.COMMUNITY_LEVY, entry.type());
+    }
+
+    @Test
+    void shouldAllowFundGrantToMember() {
+        LedgerEntry entry = new LedgerEntry(
+                "entry-009",
+                null,
+                member2,
+                10,
+                TransactionType.FUND_GRANT,
+                Instant.EPOCH
+        );
+
+        assertNull(entry.fromMemberId());
+        assertEquals(member2, entry.toMemberId());
+        assertEquals(10, entry.amount());
+        assertEquals(TransactionType.FUND_GRANT, entry.type());
+    }
+
 }

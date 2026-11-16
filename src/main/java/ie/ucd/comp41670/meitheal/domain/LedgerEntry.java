@@ -1,14 +1,11 @@
 
 package ie.ucd.comp41670.meitheal.domain;
 
-import ie.ucd.comp41670.meitheal.domain.MemberId;
-
 import java.time.Instant;
 import java.util.Objects;
 
 /**
  * Represents an immutable entry in the transaction ledger.
- *
  * R3: Records valid credit movements.
  * R7: Ledger entries are append-only and cannot be modified.
  * R12: Ledger entries can be inspected without modifying them.
