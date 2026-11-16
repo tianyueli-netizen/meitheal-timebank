@@ -55,4 +55,28 @@ class MemberTest {
         assertThrows(UnsupportedOperationException.class, () -> members.clear(),
                 "R12 Violation: Caller was able to modify returned repository collection!");
     }
+
+    @Test
+    @DisplayName("R3 / INV-2: Cannot register duplicate email (case-insensitive) to mint extra 120 welcome grants")
+    void shouldRejectDuplicateEmailRegistrationCaseInsensitive() {
+        InMemoryMemberRepository repo = new InMemoryMemberRepository();
+        repo.registerMember("Alice", "alice@ucd.ie");
+
+        // 故意用大写字母和空格尝试二次注册同一邮箱，必须抛异常拦截！
+        assertThrows(IllegalStateException.class,
+                () -> repo.registerMember("Alice Clone", "  ALICE@ucd.ie "),
+                "R3 Violation: Duplicate email registration must be blocked to prevent credit inflation!");
+        assertEquals(1, repo.count());
+    }
+
+    @Test
+    @DisplayName("R6: Member reinstate restores active operational rights after suspension")
+    void reinstatedMemberCanPerformActiveOperationsAgain() {
+        Member member = new Member(new MemberId("MEM-005"), "Frank", "frank@ucd.ie");
+        member.suspend();
+        assertThrows(IllegalStateException.class, member::assertActive);
+
+        member.reinstate();
+        assertDoesNotThrow(member::assertActive);
+    }
 }
