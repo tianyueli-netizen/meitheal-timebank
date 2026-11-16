@@ -12,7 +12,16 @@ public record SessionDuration(int minutes) {
     }
 
     public SessionDuration(double hours) {
-        this((int) Math.round(hours * 60));
+        this(validateAndConvertHours(hours));
+    }
+
+    private static int validateAndConvertHours(double hours) {
+        if (Double.isNaN(hours) || Double.isInfinite(hours) || hours <= 0.0 || hours > 8.0) {
+            throw new IllegalArgumentException(
+                    "Session duration must be greater than zero and no longer than 8 hours."
+            );
+        }
+        return (int) Math.round(hours * 60);
     }
 
     public int toMinutes() {
@@ -39,4 +48,3 @@ public record SessionDuration(int minutes) {
         return new SessionDuration(hours);
     }
 }
-

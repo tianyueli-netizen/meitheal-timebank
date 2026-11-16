@@ -5,6 +5,7 @@ import ie.ucd.comp41670.meitheal.contract.MemberRepository;
 import ie.ucd.comp41670.meitheal.domain.LedgerEntry;
 import ie.ucd.comp41670.meitheal.domain.MemberId;
 import ie.ucd.comp41670.meitheal.domain.TransactionType;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -12,13 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommunityFundServiceImpl implements CommunityFundService {
     private final MemberRepository memberRepository;
     private int fundBalance = 0;
-    private final Map<MemberId, YearMonth> lastGrantMonth = new ConcurrentHashMap<>();
+    private final Map<MemberId, Set<YearMonth>> grantMonthsByMember = new ConcurrentHashMap<>();
     private final List<LedgerEntry> fundEntries = new ArrayList<>();
 
     public CommunityFundServiceImpl(MemberRepository memberRepository) {
@@ -61,16 +63,17 @@ public class CommunityFundServiceImpl implements CommunityFundService {
         }
 
         YearMonth currentMonth = YearMonth.from(grantDate);
-        YearMonth previousMonth = lastGrantMonth.get(recipientId);
-        if (previousMonth != null && previousMonth.equals(currentMonth)) {
+        Set<YearMonth> grantedMonths = grantMonthsByMember.computeIfAbsent(
+                recipientId, k -> ConcurrentHashMap.newKeySet()
+        );
+        if (grantedMonths.contains(currentMonth)) {
             throw new IllegalStateException("INV-12 Violation: Member already received a grant in calendar month: " + currentMonth);
         }
 
         this.fundBalance -= amount;
         recipient.credit(amount);
-        lastGrantMonth.put(recipientId, currentMonth);
+        grantedMonths.add(currentMonth);
 
-        // ✅ 修复 1: 系统基金发放时 fromMemberId 为 null，toMemberId 为 recipientId
         fundEntries.add(new LedgerEntry(
                 "GRANT-" + UUID.randomUUID().toString().substring(0, 8),
                 null,
